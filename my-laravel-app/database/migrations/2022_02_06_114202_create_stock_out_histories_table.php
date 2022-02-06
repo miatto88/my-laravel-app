@@ -19,9 +19,9 @@ class CreateStockOutHistoriesTable extends Migration
             $table->integer('quantity');
             $table->integer('member_id');
             $table->integer('customer_id');
-            $table->timestamps('created_at');
-            $table->timestamps('updated_at');
-            $table->timestamps('deleted_at');
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
+            $table->timestamp('deleted_at')->nullable();
         });
     }
 
