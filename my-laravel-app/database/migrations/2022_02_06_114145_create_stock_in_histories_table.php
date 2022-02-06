@@ -14,8 +14,13 @@ class CreateStockInHistoriesTable extends Migration
     public function up()
     {
         Schema::create('stock_in_histories', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+            $table->increments('id');
+            $table->integer('item_id');
+            $table->integer('quantity');
+            $table->integer('member_id');
+            $table->timestamps('created_at');
+            $table->timestamps('updated_at');
+            $table->timestamps('deleted_at');
         });
     }
 
