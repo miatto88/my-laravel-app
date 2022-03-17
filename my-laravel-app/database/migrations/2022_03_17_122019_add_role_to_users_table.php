@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTodosTable extends Migration
+class AddRoleToUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,8 @@ class CreateTodosTable extends Migration
      */
     public function up()
     {
-        Schema::create('Todos', function (Blueprint $table) {
-            $table->increments("id");
-            $table->text("title");
-            $table->integer("user_id");
-            $table->timestamps();
-            $table->softDeletes();
+        Schema::table('users', function (Blueprint $table) {
+            $table->integer("role")->after("password");
         });
     }
 
@@ -29,6 +25,8 @@ class CreateTodosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('todos');
+        Schema::table('users', function (Blueprint $table) {
+            //
+        });
     }
 }
