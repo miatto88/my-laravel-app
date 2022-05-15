@@ -17,7 +17,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/index', 'TodoController@index');
+Route::get('/index', 'TodoController@index')->name('index');
+Route::get('/detail/{id}', 'TodoController@detail')->name('detail');
+Route::get('/edit/{id}', 'TodoController@edit')->name('edit');
 
 Auth::routes();
 

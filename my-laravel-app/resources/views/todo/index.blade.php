@@ -20,7 +20,7 @@
             <th>{{ $record->title }}</th>
             <th>{{ $record->user->name }}</th>
             <th>{{ $record->created_at }}</th>
-            <th><a href="">リンク</a></th>
+            <th><a href="{{ route('detail', ['id'=>$record->id]) }}">リンク</a></th>
         </tr>
         @endforeach
     </table>

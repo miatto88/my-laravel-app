@@ -13,5 +13,11 @@ class TodoController extends Controller
         ];
         return view('todo.index', $data);
     }
-    
+
+    public function detail($id) {
+        $data = [
+            'records' => App\Todo::with('user')->find($id)
+        ];
+        return view('todo.detail', $data);
+    }
 }
