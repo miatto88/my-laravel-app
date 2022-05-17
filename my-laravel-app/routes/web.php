@@ -19,7 +19,10 @@ Route::get('/', function () {
 
 Route::get('/index', 'TodoController@index')->name('index');
 Route::get('/detail/{id}', 'TodoController@detail')->name('detail');
+Route::get('/new', 'TodoController@new')->name('new');
+Route::post('/new', 'TodoController@store')->name('store');
 Route::get('/edit/{id}', 'TodoController@edit')->name('edit');
+Route::post('/edit/{id}', 'TodoController@update')->name('update');
 
 Auth::routes();
 

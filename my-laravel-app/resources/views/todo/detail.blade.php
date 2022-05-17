@@ -8,13 +8,13 @@
 </head>
 <body>
     <div>
-        <p>タスク名　：　{{ $records->title }}</p>
-        <p>担当者　　：　{{ $records->user->name }}</p>
-        <p>登録日　　：　{{ $records->created_at }}</p>
-        <p>更新日　　：　{{ $records->updated_at }}</p>
+        <p>タスク名　：　{{ $record->title }}</p>
+        <p>担当者　　：　{{ $record->user->name }}</p>
+        <p>登録日　　：　{{ $record->created_at }}</p>
+        <p>更新日　　：　{{ $record->updated_at }}</p>
     </div>
     <div>
-        <a href="{{ route('edit', ['id'=>$records->id]) }}">編集</a>
+        <a href="{{ route( 'edit', ['id' => $record->id] ) }}">編集</a>
     </div>
     <hr>
     <div>

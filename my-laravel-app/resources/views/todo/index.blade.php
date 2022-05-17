@@ -8,6 +8,9 @@
 </head>
 
 <body>
+    <div>
+        <a href="{{ route('new') }}">タスクを追加</a>
+    </div>
     <table border='1'>
         <tr>
             <th width='200'>タスク名</th>
