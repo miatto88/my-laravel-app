@@ -4,32 +4,45 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App;
+use App\Todo;
+use App\User;
 
 class TodoController extends Controller
 {
     public function index() {
-        $data = [
-            'records' => App\Todo::with('user')->get(),
-        ];
-        return view('todo.index', $data);
+        $records = Todo::with('user')->get();
+
+        return view('todo.index', compact('records'));
     }
 
     public function detail($id) {
-        $data = [
-            'record' => App\Todo::with('user')->find($id)
-        ];
-        return view('todo.detail', $data);
+        if (is_null(Todo::with('user')->find($id))) {
+            return App::abort(404);
+        }
+        // $record = Todo::with('user')->findOrFail($id);
+
+        $record = Todo::with('user')->find($id);
+
+        return view('todo.detail', compact('record'));
     }
 
     public function new() {
-        $data = [
-            'users' => App\User::all()
-        ];
-        return view('todo.new', $data);
+        $users = User::all();
+
+        return view('todo.new', compact('users'));
     }
 
     public function store(Request $request) {
-        $todo = new App\Todo();
+        $request->validate([
+            'title' => 'required | unique:todos',
+            'user_id' => 'required | numeric'
+        ],
+        [
+            'title.required' => 'タスク名は必須です',
+            'title.unique' => '同じタスク名が既に存在しています'
+        ]);
+
+        $todo = new Todo();
         $todo->title = $request->title;
         $todo->user_id = $request->user_id;
 
@@ -39,15 +52,14 @@ class TodoController extends Controller
     }
 
     public function edit($id) {
-        $data = [
-            'record' => App\Todo::with('user')->find($id),
-            'users' => App\User::all()
-        ];
-        return view('todo.edit', $data);
+        $record = Todo::with('user')->find($id);
+        $users = User::all();
+
+        return view('todo.edit', compact('record', 'users'));
     }
 
     public function update(Request $request, $id) {
-        $todo = new App\Todo();
+        $todo = new Todo();
         $todo->title = $request->title;
         $todo->user_id = $request->user_id;
 
