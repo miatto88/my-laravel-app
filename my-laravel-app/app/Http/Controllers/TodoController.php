@@ -53,7 +53,7 @@ class TodoController extends Controller
 
             $todo->save();
             DB::commit();
-            Log::info('DBに新しいレコードが追加されました');
+            Log::info('DBに新しいレコードが追加されました - todos.id : ' . $todo->id);
         } catch (\Exception $e) {
             DB::rollback();
         }
@@ -80,13 +80,13 @@ class TodoController extends Controller
         
         DB::beginTransaction();
         try {
-            $todo = new Todo();
+            $todo = Todo::find($id);
             $todo->title = $request->title;
             $todo->user_id = $request->user_id;
 
             $todo->save();
             DB::commit();
-            Log::info('DBの値が更新されました');
+            Log::info('DBの値が更新されました - todos.id : ' . $request->id);
         } catch (\Exception $e) {
             DB::rollback();
         }
