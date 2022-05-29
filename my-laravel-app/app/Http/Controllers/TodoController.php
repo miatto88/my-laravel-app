@@ -7,6 +7,9 @@ use App;
 use App\Todo;
 use App\User;
 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+
 class TodoController extends Controller
 {
     public function index() {
@@ -42,11 +45,18 @@ class TodoController extends Controller
             'title.unique' => '同じタスク名が既に存在しています'
         ]);
 
-        $todo = new Todo();
-        $todo->title = $request->title;
-        $todo->user_id = $request->user_id;
+        DB::beginTransaction();
+        try {
+            $todo = new Todo();
+            $todo->title = $request->title;
+            $todo->user_id = $request->user_id;
 
-        $todo->save();
+            $todo->save();
+            DB::commit();
+            Log::info('DBに新しいレコードが追加されました');
+        } catch (\Exception $e) {
+            DB::rollback();
+        }
 
         return redirect('/index');
     }
@@ -59,11 +69,27 @@ class TodoController extends Controller
     }
 
     public function update(Request $request, $id) {
-        $todo = new Todo();
-        $todo->title = $request->title;
-        $todo->user_id = $request->user_id;
+        $request->validate([
+            'title' => 'required | unique:todos',
+            'user_id' => 'required | numeric'
+        ],
+        [
+            'title.required' => 'タスク名は必須です',
+            'title.unique' => '同じタスク名が既に存在しています'
+        ]);
+        
+        DB::beginTransaction();
+        try {
+            $todo = new Todo();
+            $todo->title = $request->title;
+            $todo->user_id = $request->user_id;
 
-        $todo->save();
+            $todo->save();
+            DB::commit();
+            Log::info('DBの値が更新されました');
+        } catch (\Exception $e) {
+            DB::rollback();
+        }
 
         return redirect('/index');
     }
