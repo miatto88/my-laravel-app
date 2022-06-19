@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App;
 use App\Todo;
 use App\User;
+use App\Http\Requests\TodoRequest;;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -35,15 +36,15 @@ class TodoController extends Controller
         return view('todo.new', compact('users'));
     }
 
-    public function store(Request $request) {
-        $request->validate([
-            'title' => 'required | unique:todos',
-            'user_id' => 'required | numeric'
-        ],
-        [
-            'title.required' => 'タスク名は必須です',
-            'title.unique' => '同じタスク名が既に存在しています'
-        ]);
+    public function store(TodoRequest $request) {
+        // $request->validate([
+        //     'title' => 'required | unique:todos',
+        //     'user_id' => 'required | numeric'
+        // ],
+        // [
+        //     'title.required' => 'タスク名は必須です',
+        //     'title.unique' => '同じタスク名が既に存在しています'
+        // ]);
 
         DB::beginTransaction();
         try {
@@ -56,6 +57,7 @@ class TodoController extends Controller
             Log::info('DBに新しいレコードが追加されました - todos.id : ' . $todo->id);
         } catch (\Exception $e) {
             DB::rollback();
+            Log::error('DBへの新しいレコードの追加に失敗しました');
         }
 
         return redirect('/index');
@@ -68,15 +70,15 @@ class TodoController extends Controller
         return view('todo.edit', compact('record', 'users'));
     }
 
-    public function update(Request $request, $id) {
-        $request->validate([
-            'title' => 'required | unique:todos',
-            'user_id' => 'required | numeric'
-        ],
-        [
-            'title.required' => 'タスク名は必須です',
-            'title.unique' => '同じタスク名が既に存在しています'
-        ]);
+    public function update(TodoRequest $request, $id) {
+        // $request->validate([
+        //     'title' => 'required | unique:todos',
+        //     'user_id' => 'required | numeric'
+        // ],
+        // [
+        //     'title.required' => 'タスク名は必須です',
+        //     'title.unique' => '同じタスク名が既に存在しています'
+        // ]);
         
         DB::beginTransaction();
         try {
@@ -89,6 +91,7 @@ class TodoController extends Controller
             Log::info('DBの値が更新されました - todos.id : ' . $request->id);
         } catch (\Exception $e) {
             DB::rollback();
+            Log::error('DBの更新に失敗しました');
         }
 
         return redirect('/index');
