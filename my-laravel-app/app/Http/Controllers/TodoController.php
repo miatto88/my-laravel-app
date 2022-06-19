@@ -54,10 +54,18 @@ class TodoController extends Controller
 
             $todo->save();
             DB::commit();
-            Log::info('DBに新しいレコードが追加されました - todos.id : ' . $todo->id);
         } catch (\Exception $e) {
+            $errorLog = sprintf( '[%s][%s][%s] %s user_id: %s params: %s',
+                'TodoController',
+                'store',
+                'error',
+                'failed to update todos.',
+                $request->$user_id,
+                json_encode($request)
+            );
+            Log::error($errorLog);
+
             DB::rollback();
-            Log::error('DBへの新しいレコードの追加に失敗しました');
         }
 
         return redirect('/index');
@@ -88,10 +96,18 @@ class TodoController extends Controller
 
             $todo->save();
             DB::commit();
-            Log::info('DBの値が更新されました - todos.id : ' . $request->id);
         } catch (\Exception $e) {
+            $errorLog = sprintf( '[%s][%s][%s] %s user_id: %s params: %s',
+                'TodoController',
+                'store',
+                'error',
+                'failed to update todos.',
+                $request->$user_id,
+                json_encode($request)
+            );
+            Log::error($errorLog);
+            
             DB::rollback();
-            Log::error('DBの更新に失敗しました');
         }
 
         return redirect('/index');
