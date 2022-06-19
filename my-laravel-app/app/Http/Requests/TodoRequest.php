@@ -29,11 +29,18 @@ class TodoRequest extends FormRequest
         ];
     }
 
+    public function attributes()
+    {
+        return [
+            'title' => 'タスク名'
+        ];
+    }
+
     public function messages()
     {
         return [
-            'title.required' => 'タスク名は必須です',
-            'title.unique' => '同じタスク名が既に存在しています'
+            'title.required' => ':attributeは必須です',
+            'title.unique' => '同じ:attributeが既に存在しています'
         ];
     }
 }
