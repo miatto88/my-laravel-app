@@ -34,8 +34,8 @@ services:
     environment:
       - PMA_ARBITRARY=1
       - PMA_HOST=mysql
-      - PMA_USER=root
-      - PMA_PASSWORD=miatto
+      - PMA_USER=user
+      - PMA_PASSWORD=password
     links:
       - mysql
     ports:
