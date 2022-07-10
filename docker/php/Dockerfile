@@ -7,7 +7,8 @@ RUN apt-get update \
 git \
 zip \
 unzip \
-vim
+vim \
+cron
 
 RUN apt-get update \
     && apt-get install -y libpq-dev \
