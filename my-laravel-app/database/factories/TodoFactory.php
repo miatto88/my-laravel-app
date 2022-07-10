@@ -13,6 +13,7 @@ $factory->define(Todo::class, function (Faker $faker) {
             "git勉強",
             "引っ越し準備",
             "服買い出し"
-        ])
+        ]),
+        "status" => 0
     ];
 });

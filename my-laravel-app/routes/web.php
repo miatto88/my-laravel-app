@@ -23,6 +23,8 @@ Route::get('/new', 'TodoController@new')->name('new');
 Route::post('/new', 'TodoController@store')->name('store');
 Route::get('/edit/{id}', 'TodoController@edit')->name('edit');
 Route::post('/edit/{id}', 'TodoController@update')->name('update');
+Route::get('/complete/{id}', 'TodoController@complete')->name('complete');
+Route::get('/delete/{id}', 'TodoController@delete')->name('delete');
 
 Auth::routes();
 

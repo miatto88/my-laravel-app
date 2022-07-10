@@ -16,6 +16,7 @@
             <th width='200'>タスク名</th>
             <th width='200'>担当者</th>
             <th width='250'>登録日</th>
+            <th width='100'>完了</th>
             <th width='100'>詳細</th>
         </tr>
         @foreach ($records as $record)
@@ -23,7 +24,8 @@
             <th>{{ $record->title }}</th>
             <th>{{ $record->user->name }}</th>
             <th>{{ $record->created_at }}</th>
-            <th><a href="{{ route('detail', ['id'=>$record->id]) }}">リンク</a></th>
+            <th><a href="{{ route('complete', ['id'=>$record->id]) }}">完了</a></th>
+            <th><a href="{{ route('detail', ['id'=>$record->id]) }}">詳細</a></th>
         </tr>
         @endforeach
     </table>
