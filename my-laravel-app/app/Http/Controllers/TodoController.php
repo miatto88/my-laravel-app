@@ -115,7 +115,7 @@ class TodoController extends Controller
 
     public function delete($id) {
         $todo = Todo::find($id);
-        $todo->deleted_at = now();
+        $todo->deleted();
 
         $todo->save();
 
@@ -124,10 +124,9 @@ class TodoController extends Controller
     
     public function complete($id) {
         $todo = Todo::find($id);
-        // $todo->status = 1;
-        $todo->delete();
+        $todo->status = 1;
 
-        // $todo->save();
+        $todo->save();
 
         return redirect('/index');
     }
