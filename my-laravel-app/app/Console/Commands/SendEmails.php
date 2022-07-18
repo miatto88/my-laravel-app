@@ -53,17 +53,17 @@ class SendEmails extends Command
             ->where([
                 ['user_id', '=', $user->id],
                 ['deleted_at', '=', null],
-            ])->get();
+            ])->count();
 
             $completeTasks = Todo::where([
                 ['user_id', '=', $user->id],
                 ['status', '=', 1],
-            ])->get();
+            ])->count();
             
             $incompleteTasks = Todo::where([
                 ['user_id', '=', $user->id],
                 ['status', '=', 0],
-            ])->get();
+            ])->count();
 
             Mail::to($user['email'])->send(new WeeklyAggreagateTodo($newTasks, $completeTasks, $incompleteTasks));
         }
