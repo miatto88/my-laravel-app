@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Log;
 class TodoController extends Controller
 {
     public function index() {
-        $records = Todo::where('status', '=', 0)->with('user')->get();
+        $records = Todo::with('user')->get();
 
         return view('todo.index', compact('records'));
     }
@@ -124,9 +124,10 @@ class TodoController extends Controller
     
     public function complete($id) {
         $todo = Todo::find($id);
-        $todo->status = 1;
+        // $todo->status = 1;
+        $todo->delete();
 
-        $todo->save();
+        // $todo->save();
 
         return redirect('/index');
     }
