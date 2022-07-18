@@ -44,7 +44,7 @@ class SendEmails extends Command
      */
     public function handle()
     {
-        $users = User::whereNull('deleted_at')->get();
+        $users = User::all();
 
         foreach ($users as $user) {
             echo $user['email'] . PHP_EOL;
