@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class SendMail extends Mailable
+class WeeklyAggreagateTodo extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -37,6 +37,6 @@ class SendMail extends Mailable
     {
         return $this->from('test@example.com')
             ->subject('タスク状況通知メール')
-            ->view('mail.batch', compact('news', 'completes', 'incompletes'));
+            ->view('mail.batch_weekly-aggreagate-todo', compact('news', 'completes', 'incompletes'));
     }
 }

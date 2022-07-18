@@ -9,7 +9,7 @@ use App\User;
 use Carbon\Carbon;
 
 use Illuminate\Support\Facades\Mail;
-use App\Mail\SendMail;
+use App\Mail\WeeklyAggreagateTodo;
 
 class SendEmails extends Command
 {
@@ -18,7 +18,7 @@ class SendEmails extends Command
      *
      * @var string
      */
-    protected $signature = 'users:send_mail';
+    protected $signature = 'users:send_weekly-aggreagate-todo';
 
     /**
      * The console command description.
@@ -65,7 +65,7 @@ class SendEmails extends Command
                 ['status', '=', 0],
             ])->get();
 
-            Mail::to($user['email'])->send(new SendMail($newTasks, $completeTasks, $incompleteTasks));
+            Mail::to($user['email'])->send(new WeeklyAggreagateTodo($newTasks, $completeTasks, $incompleteTasks));
         }
         return 0;
     }
