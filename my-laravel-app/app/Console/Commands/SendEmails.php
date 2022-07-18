@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use App;
 use App\Todo;
 use App\User;
+// use App\Aggreagate;
 use Carbon\Carbon;
 
 use Illuminate\Support\Facades\Mail;
@@ -66,6 +67,12 @@ class SendEmails extends Command
             ])->count();
 
             Mail::to($user['email'])->send(new WeeklyAggreagateTodo($newTasks, $completeTasks, $incompleteTasks));
+            
+            $aggreagate = $user->aggreagate;
+            $aggreagate->aggreacate_new_tasks = $newTasks;
+            $aggreagate->aggreacate_complete_tasks = $completeTasks;
+            $aggreagate->aggreacate_incomplete_tasks = $incompleteTasks;
+            $aggreagate->save();
         }
         return 0;
     }

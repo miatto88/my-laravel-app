@@ -9,6 +9,19 @@
 
 <body>
     <div>
+        あなたのタスク状況
+    </div>
+    <div>
+        ◆今週 新たに追加したタスク　{{ $user->aggreagate->aggreacate_new_tasks }}
+    </div>
+    <div>
+        ◆今週 新たに追加したタスク　{{ $user->aggreagate->aggreacate_complete_tasks }}
+    </div>
+    <div>
+        ◆週 新たに追加したタスク　{{ $user->aggreagate->aggreacate_incomplete_tasks }}
+    </div>
+    <hr>
+    <div>
         <a href="{{ route('new') }}">タスクを追加</a>
     </div>
     <table border='1'>
@@ -19,13 +32,13 @@
             <th width='100'>完了</th>
             <th width='100'>詳細</th>
         </tr>
-        @foreach ($records as $record)
+        @foreach ($todos as $todo)
         <tr>
-            <th>{{ $record->title }}</th>
-            <th>{{ $record->user->name }}</th>
-            <th>{{ $record->created_at }}</th>
-            <th><a href="{{ route('complete', ['id'=>$record->id]) }}">完了</a></th>
-            <th><a href="{{ route('detail', ['id'=>$record->id]) }}">詳細</a></th>
+            <th>{{ $todo->title }}</th>
+            <th>{{ $todo->user->name }}</th>
+            <th>{{ $todo->created_at }}</th>
+            <th><a href="{{ route('complete', ['id'=>$todo->id]) }}">完了</a></th>
+            <th><a href="{{ route('detail', ['id'=>$todo->id]) }}">詳細</a></th>
         </tr>
         @endforeach
     </table>

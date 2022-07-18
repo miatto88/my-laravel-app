@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App;
 use App\Todo;
 use App\User;
@@ -14,9 +15,10 @@ use Illuminate\Support\Facades\Log;
 class TodoController extends Controller
 {
     public function index() {
-        $records = Todo::with('user')->get();
+        $todos = Todo::with('user')->get();
+        $user = User::find(1);
 
-        return view('todo.index', compact('records'));
+        return view('todo.index', compact('todos', 'user'));
     }
 
     public function detail($id) {
