@@ -53,6 +53,7 @@ class TodoController extends Controller
             $todo = new Todo();
             $todo->title = $request->title;
             $todo->user_id = $request->user_id;
+            $todo->status = 0;
 
             $todo->save();
             DB::commit();
@@ -62,7 +63,7 @@ class TodoController extends Controller
                 'store',
                 'error',
                 'failed to update todos.',
-                $request->$user_id,
+                $request->user_id,
                 json_encode($request)
             );
             Log::error($errorLog);
