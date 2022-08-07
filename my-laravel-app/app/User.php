@@ -43,7 +43,7 @@ class User extends Authenticatable
         return $this->hasMany('App\Todo');
     }
 
-    public function aggreagate() {
-        return $this->belongsTo('App\Aggreagate');
+    public function aggregate() {
+        return $this->belongsTo('App\aggregate');
     }
 }

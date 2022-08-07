@@ -6,11 +6,11 @@ use Illuminate\Console\Command;
 use App;
 use App\Todo;
 use App\User;
-// use App\Aggreagate;
+// use App\aggregate;
 use Carbon\Carbon;
 
 use Illuminate\Support\Facades\Mail;
-use App\Mail\WeeklyAggreagateTodo;
+use App\Mail\WeeklyaggregateTodo;
 
 class SendEmails extends Command
 {
@@ -19,7 +19,7 @@ class SendEmails extends Command
      *
      * @var string
      */
-    protected $signature = 'users:send_weekly-aggreagate-todo';
+    protected $signature = 'users:send_weekly-aggregate-todo';
 
     /**
      * The console command description.
@@ -66,13 +66,13 @@ class SendEmails extends Command
                 ['status', '=', 0],
             ])->count();
 
-            Mail::to($user['email'])->send(new WeeklyAggreagateTodo($newTasks, $completeTasks, $incompleteTasks));
+            Mail::to($user['email'])->send(new WeeklyaggregateTodo($newTasks, $completeTasks, $incompleteTasks));
             
-            $aggreagate = $user->aggreagate;
-            $aggreagate->aggreacate_new_tasks = $newTasks;
-            $aggreagate->aggreacate_complete_tasks = $completeTasks;
-            $aggreagate->aggreacate_incomplete_tasks = $incompleteTasks;
-            $aggreagate->save();
+            $aggregate = $user->aggregate;
+            $aggregate->aggregate_new_tasks = $newTasks;
+            $aggregate->aggregate_complete_tasks = $completeTasks;
+            $aggregate->aggregate_incomplete_tasks = $incompleteTasks;
+            $aggregate->save();
         }
         return 0;
     }

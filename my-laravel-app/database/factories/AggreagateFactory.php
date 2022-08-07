@@ -2,13 +2,13 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\Aggreagate;
+use App\aggregate;
 use Faker\Generator as Faker;
 
-$factory->define(Aggreagate::class, function (Faker $faker) {
+$factory->define(aggregate::class, function (Faker $faker) {
     return [
-        'aggreacate_new_tasks' => '0',
-        'aggreacate_complete_tasks' => '0',
-        'aggreacate_incomplete_tasks' => '0',
+        'aggregate_new_tasks' => '0',
+        'aggregate_complete_tasks' => '0',
+        'aggregate_incomplete_tasks' => '0',
     ];
 });

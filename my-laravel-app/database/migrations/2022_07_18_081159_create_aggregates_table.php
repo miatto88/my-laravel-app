@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAggreagatesTable extends Migration
+class CreateaggregatesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateAggreagatesTable extends Migration
      */
     public function up()
     {
-        Schema::create('aggreagates', function (Blueprint $table) {
+        Schema::create('aggregates', function (Blueprint $table) {
             $table->id();
-            $table->integer("aggreacate_new_tasks")->default(0);
-            $table->integer("aggreacate_complete_tasks")->default(0);
-            $table->integer("aggreacate_incomplete_tasks")->default(0);
+            $table->integer("aggregate_new_tasks")->default(0);
+            $table->integer("aggregate_complete_tasks")->default(0);
+            $table->integer("aggregate_incomplete_tasks")->default(0);
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ class CreateAggreagatesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('aggreagates');
+        Schema::dropIfExists('aggregates');
     }
 }

@@ -26,7 +26,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         // $schedule->command('users:send_mail')->everyMinute();
-        $schedule->command('users:send_weekly-aggreagate-todo')->weeklyOn(5, '18:00');
+        $schedule->command('users:send_weekly-aggregate-todo')->weeklyOn(5, '18:00');
     }
 
     /**
