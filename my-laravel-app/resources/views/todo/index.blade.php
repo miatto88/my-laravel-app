@@ -12,13 +12,13 @@
         あなたのタスク状況
     </div>
     <div>
-        ◆今週 新たに追加したタスク　{{ $user->aggregate->aggregate_new_tasks }}
+        ◆今週 新たに追加したタスク　{{ $user->aggregate->aggregate_new_task_count }}
     </div>
     <div>
-        ◆今週 新たに追加したタスク　{{ $user->aggregate->aggregate_complete_tasks }}
+        ◆今週 新たに追加したタスク　{{ $user->aggregate->aggregate_complete_task_count }}
     </div>
     <div>
-        ◆週 新たに追加したタスク　{{ $user->aggregate->aggregate_incomplete_tasks }}
+        ◆週 新たに追加したタスク　{{ $user->aggregate->aggregate_incomplete_task_count }}
     </div>
     <hr>
     <div>

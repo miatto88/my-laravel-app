@@ -15,9 +15,9 @@ class CreateaggregatesTable extends Migration
     {
         Schema::create('aggregates', function (Blueprint $table) {
             $table->id();
-            $table->integer("aggregate_new_tasks")->default(0);
-            $table->integer("aggregate_complete_tasks")->default(0);
-            $table->integer("aggregate_incomplete_tasks")->default(0);
+            $table->integer("aggregate_new_task_count")->default(0);
+            $table->integer("aggregate_complete_task_count")->default(0);
+            $table->integer("aggregate_incomplete_task_count")->default(0);
             $table->timestamps();
         });
     }

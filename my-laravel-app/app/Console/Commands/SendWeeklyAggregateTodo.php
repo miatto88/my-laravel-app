@@ -50,28 +50,28 @@ class SendEmails extends Command
         foreach ($users as $user) {
             echo $user['email'] . PHP_EOL;
 
-            $newTasks = Todo::whereDate('created_at', '>', Carbon::today()->subday(7))
+            $newTaskCount = Todo::whereDate('created_at', '>', Carbon::today()->subday(7))
             ->where([
                 ['user_id', '=', $user->id],
                 ['deleted_at', '=', null],
             ])->count();
 
-            $completeTasks = Todo::where([
+            $completeTaskCount = Todo::where([
                 ['user_id', '=', $user->id],
                 ['status', '=', 1],
             ])->count();
             
-            $incompleteTasks = Todo::where([
+            $incompleteTaskCount = Todo::where([
                 ['user_id', '=', $user->id],
                 ['status', '=', 0],
             ])->count();
 
-            Mail::to($user['email'])->send(new WeeklyaggregateTodo($newTasks, $completeTasks, $incompleteTasks));
+            Mail::to($user['email'])->send(new WeeklyaggregateTodo($newTaskCount, $completeTaskCount, $incompleteTaskCount));
             
             $aggregate = $user->aggregate;
-            $aggregate->aggregate_new_tasks = $newTasks;
-            $aggregate->aggregate_complete_tasks = $completeTasks;
-            $aggregate->aggregate_incomplete_tasks = $incompleteTasks;
+            $aggregate->aggregate_new_task_count = $newTaskCount;
+            $aggregate->aggregate_complete_task_count = $completeTaskCount;
+            $aggregate->aggregate_incomplete_task_count = $incompleteTaskCount;
             $aggregate->save();
         }
         return 0;
