@@ -12,6 +12,9 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\WeeklyaggregateTodo;
 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+
 class SendEmails extends Command
 {
     /**
@@ -66,13 +69,29 @@ class SendEmails extends Command
                 ['status', '=', 0],
             ])->count();
 
-            Mail::to($user['email'])->send(new WeeklyaggregateTodo($newTaskCount, $completeTaskCount, $incompleteTaskCount));
-            
-            $aggregate = $user->aggregate;
-            $aggregate->aggregate_new_task_count = $newTaskCount;
-            $aggregate->aggregate_complete_task_count = $completeTaskCount;
-            $aggregate->aggregate_incomplete_task_count = $incompleteTaskCount;
-            $aggregate->save();
+            DB::beginTransaction();
+            try {
+                $aggregate = $user->aggregate;
+                $aggregate->aggregate_new_task_count = $newTaskCount;
+                $aggregate->aggregate_complete_task_count = $completeTaskCount;
+                $aggregate->aggregate_incomplete_task_count = $incompleteTaskCount;
+                $aggregate->save();
+                DB::commit();
+
+                Mail::to($user['email'])->send(new WeeklyaggregateTodo($newTaskCount, $completeTaskCount, $incompleteTaskCount));
+            } catch (\Exception $e) {
+                $errorLog = sprintf( '[%s][%s][%s] %s user_id: %s params: %s',
+                    'SendWeeklyAggregateTodo',
+                    'store',
+                    'error',
+                    'failed to update todos.',
+                    $request->user_id,
+                    json_encode($request)
+                );
+                Log::error($errorLog);
+    
+                DB::rollback();
+            }
         }
         return 0;
     }
