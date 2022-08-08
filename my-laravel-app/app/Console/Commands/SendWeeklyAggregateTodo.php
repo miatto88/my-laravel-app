@@ -48,7 +48,11 @@ class SendEmails extends Command
      */
     public function handle()
     {
+        Log::info('[SendWeeklyAggregateTodo][batch][run]');
+
         $users = User::all();
+        $successCount = 0;
+        $failedCount = 0;
 
         foreach ($users as $user) {
             echo $user['email'] . PHP_EOL;
@@ -75,24 +79,38 @@ class SendEmails extends Command
                 $aggregate->aggregate_new_task_count = $newTaskCount;
                 $aggregate->aggregate_complete_task_count = $completeTaskCount;
                 $aggregate->aggregate_incomplete_task_count = $incompleteTaskCount;
+                throw new \Exception("DBエラー");
                 $aggregate->save();
                 DB::commit();
 
                 Mail::to($user['email'])->send(new WeeklyaggregateTodo($newTaskCount, $completeTaskCount, $incompleteTaskCount));
+                if( empty(Mail::failures()) ) {
+                    $successCount++;
+                } else {
+                    $failedCount++;
+                }
             } catch (\Exception $e) {
-                $errorLog = sprintf( '[%s][%s][%s] %s user_id: %s params: %s',
+                $errorLog = sprintf( '[%s][%s][%s] %s user_id: %s stack trace: %s %s',
                     'SendWeeklyAggregateTodo',
-                    'store',
-                    'error',
-                    'failed to update todos.',
-                    $request->user_id,
-                    json_encode($request)
+                    'batch',
+                    'exception error',
+                    'failed to update aggregates.',
+                    $user->id,
+                    $e->getFile(),
+                    $e->getLine()
                 );
                 Log::error($errorLog);
+                $failedCount++;
     
                 DB::rollback();
             }
         }
+        $completeLog = sprintf( '[SendWeeklyAggregateTodo][batch][complete] success: %s failed: %s',
+            $successCount,
+            $failedCount
+        );
+
+        Log::info($completeLog);
         return 0;
     }
 }
