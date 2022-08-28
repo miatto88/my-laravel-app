@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use App\Console\Commands\BaseCommand;
 use App;
 use App\Todo;
 use App\User;
@@ -15,7 +16,7 @@ use App\Mail\WeeklyaggregateTodo;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class SendEmails extends Command
+class SendEmails extends BaseCommand
 {
     /**
      * The name and signature of the console command.
@@ -48,14 +49,14 @@ class SendEmails extends Command
      */
     public function handle()
     {
-        Log::info('[SendWeeklyAggregateTodo][batch][run]');
+        $this->loggerInfo('run', 'start');
 
         $users = User::all();
         $successCount = 0;
         $failedCount = 0;
 
         foreach ($users as $user) {
-            echo $user['email'] . PHP_EOL;
+            // echo $user['email'] . PHP_EOL;
 
             $newTaskCount = Todo::whereDate('created_at', '>', Carbon::today()->subday(7))
             ->where([
@@ -79,38 +80,48 @@ class SendEmails extends Command
                 $aggregate->aggregate_new_task_count = $newTaskCount;
                 $aggregate->aggregate_complete_task_count = $completeTaskCount;
                 $aggregate->aggregate_incomplete_task_count = $incompleteTaskCount;
-                throw new \Exception("DBエラー");
+                // throw new \Exception("DBエラー");
                 $aggregate->save();
                 DB::commit();
+                $this->loggerInfo('send seccess', $user->email);
+            } catch (\Exception $e) {
+                $errorLog = sprintf( '%s user_id: %s stack trace: %s %s',
+                    'failed to update aggregates.',
+                    $user->id,
+                    $e->getFile(),
+                    $e->getLine()
+                );
+                $this->loggerError('execption error', $errorLog);
+                $failedCount++;
+    
+                DB::rollback();
+            }
 
+            try {
                 Mail::to($user['email'])->send(new WeeklyaggregateTodo($newTaskCount, $completeTaskCount, $incompleteTaskCount));
                 if( empty(Mail::failures()) ) {
                     $successCount++;
                 } else {
                     $failedCount++;
                 }
-            } catch (\Exception $e) {
-                $errorLog = sprintf( '[%s][%s][%s] %s user_id: %s stack trace: %s %s',
-                    'SendWeeklyAggregateTodo',
-                    'batch',
-                    'exception error',
-                    'failed to update aggregates.',
+            } catch (\Exception $e)  {
+                $errorLog = sprintf( '%s user_id: %s stack trace: %s %s',
+                    'failed to send mail.',
                     $user->id,
                     $e->getFile(),
                     $e->getLine()
                 );
-                Log::error($errorLog);
+                $this->loggerError('execption error', $errorLog);
                 $failedCount++;
     
                 DB::rollback();
             }
         }
-        $completeLog = sprintf( '[SendWeeklyAggregateTodo][batch][complete] success: %s failed: %s',
+
+        $completeLog = sprintf('success: %s failed: %s',
             $successCount,
             $failedCount
         );
-
-        Log::info($completeLog);
-        return 0;
+        $this->loggerInfo('complete', $completeLog);
     }
 }
