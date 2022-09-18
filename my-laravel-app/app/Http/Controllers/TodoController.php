@@ -14,8 +14,20 @@ use Illuminate\Support\Facades\Log;
 
 class TodoController extends Controller
 {
-    public function index() {
-        $todos = Todo::with('user')->get();
+    public function index(Request $request) {
+        $todos = TOdo::query();
+        if(isset($request->title)) {
+            $todos->where('title', 'LIKE', "%$request->title%");
+        }
+        if(isset($request->user_name)) {
+            $todos->whereIn('user_id', function($query) use ($request) {
+                $query->select('id')
+                    ->from('users')
+                    ->where('name', 'LIKE', "%$request->user_name%");
+            });
+        }
+
+        $todos = $todos->paginate(5);
         $user = User::find(Auth::user()->id);
 
         return view('todo.index', compact('todos', 'user'));
