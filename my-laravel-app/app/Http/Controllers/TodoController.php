@@ -14,32 +14,15 @@ use Illuminate\Support\Facades\Log;
 
 class TodoController extends Controller
 {
-    public function index(Request $request) {
-        $todos = TOdo::query();
-        if(isset($request->title)) {
-            $todos->where('title', 'LIKE', "%$request->title%");
-        }
-        if(isset($request->user_name)) {
-            $todos->whereIn('user_id', function($query) use ($request) {
-                $query->select('id')
-                    ->from('users')
-                    ->where('name', 'LIKE', "%$request->user_name%");
-            });
-        }
-
-        $todos = $todos->paginate(5);
+    public function index(Request $search) {
+        $todos = Todo::getTodoList($search);
         $user = User::find(Auth::user()->id);
 
         return view('todo.index', compact('todos', 'user'));
     }
 
     public function detail($id) {
-        if (is_null(Todo::with('user')->find($id))) {
-            return App::abort(404);
-        }
-        // $record = Todo::with('user')->findOrFail($id);
-
-        $record = Todo::with('user')->find($id);
+        $record = Todo::with('user')->findOrFail($id);
 
         return view('todo.detail', compact('record'));
     }
@@ -51,23 +34,21 @@ class TodoController extends Controller
     }
 
     public function store(TodoRequest $request) {
-        // $request->validate([
-        //     'title' => 'required | unique:todos',
-        //     'user_id' => 'required | numeric'
-        // ],
-        // [
-        //     'title.required' => 'タスク名は必須です',
-        //     'title.unique' => '同じタスク名が既に存在しています'
-        // ]);
+        $userExist = User::where('id', $request->user_id)->exists();
+        if( !$userExist) {
+            return redirect()->back();
+        }
 
         DB::beginTransaction();
         try {
             $todo = new Todo();
-            $todo->title = $request->title;
-            $todo->user_id = $request->user_id;
             $todo->status = 0;
+            $todo->fill($request->validated())->save();
+            // $user = User::find($requst->user_id);
+            // $user->todo()->create(
+            //     $request->validated()
+            // );
 
-            $todo->save();
             DB::commit();
         } catch (\Exception $e) {
             $errorLog = sprintf( '[%s][%s][%s] %s user_id: %s params: %s',
@@ -93,23 +74,12 @@ class TodoController extends Controller
         return view('todo.edit', compact('record', 'users'));
     }
 
-    public function update(TodoRequest $request, $id) {
-        // $request->validate([
-        //     'title' => 'required | unique:todos',
-        //     'user_id' => 'required | numeric'
-        // ],
-        // [
-        //     'title.required' => 'タスク名は必須です',
-        //     'title.unique' => '同じタスク名が既に存在しています'
-        // ]);
-        
+    public function update(TodoRequest $request, $id) {        
         DB::beginTransaction();
         try {
             $todo = Todo::find($id);
-            $todo->title = $request->title;
-            $todo->user_id = $request->user_id;
+            $todo->fill($request->validated())->save();
 
-            $todo->save();
             DB::commit();
         } catch (\Exception $e) {
             $errorLog = sprintf( '[%s][%s][%s] %s user_id: %s params: %s',
