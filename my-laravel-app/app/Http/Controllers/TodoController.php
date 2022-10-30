@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App;
 use App\Todo;
 use App\User;
@@ -16,7 +17,7 @@ class TodoController extends Controller
 {
     public function index(Request $search) {
         $todos = Todo::getTodoList($search);
-        $user = User::find(Auth::user()->id);
+        $user = Auth::user();
 
         return view('todo.index', compact('todos', 'user'));
     }
@@ -34,20 +35,10 @@ class TodoController extends Controller
     }
 
     public function store(TodoRequest $request) {
-        $userExist = User::where('id', $request->user_id)->exists();
-        if( !$userExist) {
-            return redirect()->back();
-        }
-
         DB::beginTransaction();
         try {
-            $todo = new Todo();
-            $todo->status = 0;
-            $todo->fill($request->validated())->save();
-            // $user = User::find($requst->user_id);
-            // $user->todo()->create(
-            //     $request->validated()
-            // );
+            $user = User::findOrFail($request->user_id);
+            $user->todos()->create($request->validated());
 
             DB::commit();
         } catch (\Exception $e) {
@@ -68,7 +59,7 @@ class TodoController extends Controller
     }
 
     public function edit($id) {
-        $record = Todo::with('user')->find($id);
+        $record = Todo::with('user')->findOrFail($id);
         $users = User::all();
 
         return view('todo.edit', compact('record', 'users'));
@@ -77,7 +68,7 @@ class TodoController extends Controller
     public function update(TodoRequest $request, $id) {        
         DB::beginTransaction();
         try {
-            $todo = Todo::find($id);
+            $todo = Todo::findOrFail($id);
             $todo->fill($request->validated())->save();
 
             DB::commit();
@@ -99,19 +90,51 @@ class TodoController extends Controller
     }
 
     public function delete($id) {
-        $todo = Todo::find($id);
-        $todo->deleted();
-
-        $todo->save();
+        DB::beginTransaction();
+        try {
+            $todo = Todo::findOrFail($id);
+            $todo->deleted();
+    
+            $todo->save();
+            DB::commit();
+        } catch (\Exception $e) {
+            $errorLog = sprintf( '[%s][%s][%s] %s user_id: %s params: %s',
+                'TodoController',
+                'delete',
+                'error',
+                'failed to delete todos.',
+                $request->$user_id,
+                json_encode($request)
+            );
+            Log::error($errorLog);
+            
+            DB::rollback();
+        }
 
         return redirect('/index');
     }
-    
-    public function complete($id) {
-        $todo = Todo::find($id);
-        $todo->status = 1;
 
-        $todo->save();
+    public function complete($id) {
+        DB::beginTransaction();
+        try {
+            $todo = Todo::findOrFail($id);
+            $todo->status = 1;
+    
+            $todo->save();
+            DB::commit();
+        } catch (\Exception $e) {
+            $errorLog = sprintf( '[%s][%s][%s] %s user_id: %s params: %s',
+                'TodoController',
+                'edit',
+                'error',
+                'failed to edit todos.',
+                $request->$user_id,
+                json_encode($request)
+            );
+            Log::error($errorLog);
+            
+            DB::rollback();
+        }
 
         return redirect('/index');
     }

@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\User;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class TodoRequest extends FormRequest
 {
@@ -27,6 +29,16 @@ class TodoRequest extends FormRequest
             'title' => 'required | unique:todos',
             'user_id' => 'required | numeric'
         ];
+    }
+
+    public function withValidator($validator) {
+        $validator->after(function($validator) {
+            try {
+                User::findOrFail($this->user_id);
+            } catch (ModelNotFoundException $e) {
+                $validator->errors()->add('model', 'ユーザーが存在しません');
+            }
+        });
     }
 
     public function attributes()
