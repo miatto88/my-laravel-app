@@ -9,12 +9,15 @@ use App;
 use App\Todo;
 use App\User;
 use App\Http\Requests\TodoRequest;;
+use App\Traits\LogTrait;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class TodoController extends Controller
 {
+    use LogTrait;
+
     public function index(Request $search) {
         $todos = Todo::getTodoList($search);
         $user = Auth::user();
@@ -35,6 +38,8 @@ class TodoController extends Controller
     }
 
     public function store(TodoRequest $request) {
+        $this->start();
+
         DB::beginTransaction();
         try {
             $user = User::findOrFail($request->user_id);
@@ -42,19 +47,12 @@ class TodoController extends Controller
 
             DB::commit();
         } catch (\Exception $e) {
-            $errorLog = sprintf( '[%s][%s][%s] %s user_id: %s params: %s',
-                'TodoController',
-                'store',
-                'error',
-                'failed to update todos.',
-                $request->user_id,
-                json_encode($request)
-            );
-            Log::error($errorLog);
+            $this->errorLog('todos', $request);
 
             DB::rollback();
         }
 
+        $this->end();
         return redirect('/index');
     }
 
@@ -66,55 +64,48 @@ class TodoController extends Controller
     }
 
     public function update(TodoRequest $request, $id) {        
+        $this->start();
+
         DB::beginTransaction();
         try {
+            throw new \Exception('error');
             $todo = Todo::findOrFail($id);
             $todo->fill($request->validated())->save();
 
             DB::commit();
         } catch (\Exception $e) {
-            $errorLog = sprintf( '[%s][%s][%s] %s user_id: %s params: %s',
-                'TodoController',
-                'store',
-                'error',
-                'failed to update todos.',
-                $request->$user_id,
-                json_encode($request)
-            );
-            Log::error($errorLog);
-            
+            $this->errorLog('todos', $request);
+
             DB::rollback();
         }
 
+        $this->end();
         return redirect('/index');
     }
 
     public function delete($id) {
+        $this->start();
+
         DB::beginTransaction();
         try {
             $todo = Todo::findOrFail($id);
             $todo->deleted();
-    
+
             $todo->save();
             DB::commit();
         } catch (\Exception $e) {
-            $errorLog = sprintf( '[%s][%s][%s] %s user_id: %s params: %s',
-                'TodoController',
-                'delete',
-                'error',
-                'failed to delete todos.',
-                $request->$user_id,
-                json_encode($request)
-            );
-            Log::error($errorLog);
-            
+            $this->errorLog('todos', $request);
+
             DB::rollback();
         }
 
+        $this->end();
         return redirect('/index');
     }
 
     public function complete($id) {
+        $this->start();
+
         DB::beginTransaction();
         try {
             $todo = Todo::findOrFail($id);
@@ -123,19 +114,12 @@ class TodoController extends Controller
             $todo->save();
             DB::commit();
         } catch (\Exception $e) {
-            $errorLog = sprintf( '[%s][%s][%s] %s user_id: %s params: %s',
-                'TodoController',
-                'edit',
-                'error',
-                'failed to edit todos.',
-                $request->$user_id,
-                json_encode($request)
-            );
-            Log::error($errorLog);
-            
+            $this->errorLog('todos', $request);
+
             DB::rollback();
         }
 
+        $this->end();
         return redirect('/index');
     }
 }
