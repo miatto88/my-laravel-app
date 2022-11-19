@@ -17,3 +17,6 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('/user/index', 'ApiUserController@index')->name('index');
+Route::get('/todo/index', 'ApiTodoController@index')->name('index');
