@@ -3,11 +3,22 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
+use App\Todo;
 use App\User;
+use App\Aggregate;
+use App\Traits\LogTrait;
+use App\Http\Requests\StoreApiUserRequest;
+use App\Http\Requests\UpdateApiUserRequest;
+
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ApiUserController extends Controller
 {
+    use LogTrait;
+
     /**
      * Display a listing of the resource.
      *
@@ -24,9 +35,24 @@ class ApiUserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreApiUserRequest $request)
     {
-        //
+        $this->start();
+
+        DB::beginTransaction();
+        try {
+            $aggregate = new Aggregate();
+            $aggregate->save();
+            $aggregate->user()->create($request->validated());
+
+            DB::commit();
+        } catch (\Exception $e) {
+            $this->errorLog('users', $request);
+            DB::rollback();
+        }
+
+        $this->end();
+        return json_encode($request);
     }
 
     /**
@@ -37,7 +63,8 @@ class ApiUserController extends Controller
      */
     public function show($id)
     {
-        //
+        $user = User::findOrFail($id);
+        return json_encode($user);
     }
 
     /**
@@ -47,9 +74,23 @@ class ApiUserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateApiUserRequest $request, $id)
     {
-        //
+        $this->start();
+
+        DB::beginTransaction();
+        try {
+            $user = User::findOrFail($id);
+            $user->fill($request->validated())->save();
+
+            DB::commit();
+        } catch (\Exception $e) {
+            $this->errorLog('users', $request);
+            DB::rollback();
+        }
+
+        $this->end();
+        return json_encode($request);
     }
 
     /**
@@ -60,6 +101,21 @@ class ApiUserController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $this->start();
+
+        DB::beginTransaction();
+        try {
+            $user = User::findOrFail($id);
+            $user->delete();
+
+            $user->save();
+            DB::commit();
+        } catch (\Exception $e) {
+            $this->errorLog('users', $request);
+            DB::rollback();
+        }
+
+        $this->end();
+        return json_encode($user);
     }
 }

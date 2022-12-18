@@ -47,12 +47,12 @@ trait LogTrait
     {
         $caller = $this->fetchCaller();
 
-        $errorLog = sprintf( '[%s][%s][%s] %s user_id: %s params: %s',
+        $errorLog = sprintf( '[%s][%s][%s] %s params: %s',
             $caller['class'],
             $caller['function'],
             'error',
             "failed to {$caller['function']} {$model}.",
-            Auth::user()->id,
+            // Auth::user()->id,
             json_encode($request)
         );
         Log::error($errorLog);
