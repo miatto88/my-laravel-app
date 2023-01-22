@@ -38,7 +38,7 @@ class TodoController extends Controller
     }
 
     public function store(TodoRequest $request) {
-        $this->start();
+        $this->logStart();
 
         DB::beginTransaction();
         try {
@@ -52,7 +52,7 @@ class TodoController extends Controller
             DB::rollback();
         }
 
-        $this->end();
+        $this->logEnd();
         return redirect('/index');
     }
 
@@ -64,7 +64,7 @@ class TodoController extends Controller
     }
 
     public function update(TodoRequest $request, $id) {        
-        $this->start();
+        $this->logStart();
 
         DB::beginTransaction();
         try {
@@ -79,12 +79,12 @@ class TodoController extends Controller
             DB::rollback();
         }
 
-        $this->end();
+        $this->logEnd();
         return redirect('/index');
     }
 
     public function delete($id) {
-        $this->start();
+        $this->logStart();
 
         DB::beginTransaction();
         try {
@@ -99,12 +99,12 @@ class TodoController extends Controller
             DB::rollback();
         }
 
-        $this->end();
+        $this->logEnd();
         return redirect('/index');
     }
 
     public function complete($id) {
-        $this->start();
+        $this->logStart();
 
         DB::beginTransaction();
         try {
@@ -119,7 +119,7 @@ class TodoController extends Controller
             DB::rollback();
         }
 
-        $this->end();
+        $this->logEnd();
         return redirect('/index');
     }
 }

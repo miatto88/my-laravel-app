@@ -39,7 +39,7 @@ class ApiUserController extends Controller
      */
     public function store(StoreApiUserRequest $request)
     {
-        $this->start();
+        $this->logStart();
 
         DB::beginTransaction();
         try {
@@ -53,7 +53,7 @@ class ApiUserController extends Controller
             DB::rollback();
         }
 
-        $this->end();
+        $this->logEnd();
         return response()->json($request);
     }
 
@@ -78,7 +78,7 @@ class ApiUserController extends Controller
      */
     public function update(UpdateApiUserRequest $request, $id)
     {
-        $this->start();
+        $this->logStart();
 
         DB::beginTransaction();
         try {
@@ -91,7 +91,7 @@ class ApiUserController extends Controller
             DB::rollback();
         }
 
-        $this->end();
+        $this->logEnd();
         return response()->json($request);
     }
 
@@ -103,7 +103,7 @@ class ApiUserController extends Controller
      */
     public function destroy($id)
     {
-        $this->start();
+        $this->logStart();
 
         DB::beginTransaction();
         try {
@@ -117,7 +117,7 @@ class ApiUserController extends Controller
             DB::rollback();
         }
 
-        $this->end();
+        $this->logEnd();
         return response()->json($user);
     }
 }

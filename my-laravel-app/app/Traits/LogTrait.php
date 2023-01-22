@@ -11,7 +11,7 @@ trait LogTrait
     /**
      * 開始ログ
      */
-    public function start()
+    public function logStart()
     {
         $caller = $this->fetchCaller();
         Log::info(" [{$caller['class']}][{$caller['function']}] start.");
@@ -20,7 +20,7 @@ trait LogTrait
     /**
      * 終了ログ
      */
-    public function end()
+    public function logEnd()
     {
         $caller = $this->fetchCaller();
         Log::info(" [{$caller['class']}][{$caller['function']}] end.");

@@ -38,7 +38,7 @@ class ApiTodoController extends Controller
      */
     public function store(StoreApiTodoRequest $request)
     {
-        $this->start();
+        $this->logStart();
 
         DB::beginTransaction();
         try {
@@ -51,7 +51,7 @@ class ApiTodoController extends Controller
             DB::rollback();
         }
 
-        $this->end();
+        $this->logEnd();
         return response()->json($request);
     }
 
@@ -76,7 +76,7 @@ class ApiTodoController extends Controller
      */
     public function update(UpdateApiTodoRequest $request, $id)
     {
-        $this->start();
+        $this->logStart();
 
         DB::beginTransaction();
         try {
@@ -89,7 +89,7 @@ class ApiTodoController extends Controller
             DB::rollback();
         }
 
-        $this->end();
+        $this->logEnd();
         return response()->json($request);
     }
 
@@ -101,7 +101,7 @@ class ApiTodoController extends Controller
      */
     public function destroy($id)
     {
-        $this->start();
+        $this->logStart();
 
         DB::beginTransaction();
         try {
@@ -116,7 +116,7 @@ class ApiTodoController extends Controller
             return response()->json($id);
         }
 
-        $this->end();
+        $this->logEnd();
         return response()->json($todo);
     }
 }
