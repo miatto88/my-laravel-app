@@ -1,21 +1,22 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
+use App\Http\Controllers\Controller;
+
 use App\Todo;
 use App\User;
-use App\Aggregate;
 use App\Traits\LogTrait;
-use App\Http\Requests\StoreApiUserRequest;
-use App\Http\Requests\UpdateApiUserRequest;
+use App\Http\Requests\StoreApiTodoRequest;
+use App\Http\Requests\UpdateApiTodoRequest;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class ApiUserController extends Controller
+class ApiTodoController extends Controller
 {
     use LogTrait;
 
@@ -26,7 +27,7 @@ class ApiUserController extends Controller
      */
     public function index()
     {
-        return json_encode(User::all());
+        return json_encode(Todo::all());
     }
 
     /**
@@ -35,19 +36,18 @@ class ApiUserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreApiUserRequest $request)
+    public function store(StoreApiTodoRequest $request)
     {
         $this->start();
 
         DB::beginTransaction();
         try {
-            $aggregate = new Aggregate();
-            $aggregate->save();
-            $aggregate->user()->create($request->validated());
+            $user = User::findOrFail($request->user_id);
+            $user->todos()->create($request->validated());
 
             DB::commit();
         } catch (\Exception $e) {
-            $this->errorLog('users', $request);
+            $this->errorLog('todos', $request);
             DB::rollback();
         }
 
@@ -63,8 +63,8 @@ class ApiUserController extends Controller
      */
     public function show($id)
     {
-        $user = User::findOrFail($id);
-        return json_encode($user);
+        $todo = Todo::with('user')->findOrFail($id);
+        return json_encode($todo);
     }
 
     /**
@@ -74,18 +74,18 @@ class ApiUserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateApiUserRequest $request, $id)
+    public function update(UpdateApiTodoRequest $request, $id)
     {
         $this->start();
 
         DB::beginTransaction();
         try {
-            $user = User::findOrFail($id);
-            $user->fill($request->validated())->save();
+            $todo = Todo::findOrFail($id);
+            $todo->fill($request->validated())->save();
 
             DB::commit();
         } catch (\Exception $e) {
-            $this->errorLog('users', $request);
+            $this->errorLog('todos', $request);
             DB::rollback();
         }
 
@@ -105,17 +105,18 @@ class ApiUserController extends Controller
 
         DB::beginTransaction();
         try {
-            $user = User::findOrFail($id);
-            $user->delete();
+            $todo = Todo::findOrFail($id);
+            $todo->delete();
 
-            $user->save();
+            $todo->save();
             DB::commit();
         } catch (\Exception $e) {
-            $this->errorLog('users', $request);
+            $this->errorLog('todos', 'delete id: ' . $id);
             DB::rollback();
+            return json_encode($id);
         }
 
         $this->end();
-        return json_encode($user);
+        return json_encode($todo);
     }
 }

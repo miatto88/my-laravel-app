@@ -18,15 +18,14 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/user', 'ApiUserController@index');
-Route::get('/user', 'ApiUserController@index');
-Route::post('/user', 'ApiUserController@store');
-Route::get('/user/{id}', 'ApiUserController@show');
-Route::patch('/user/{id}', 'ApiUserController@update');
-Route::delete('/user/{id}', 'ApiUserController@destroy')->name('api.user.delete');
+Route::get('/user', 'Api\ApiUserController@index');
+Route::post('/user', 'Api\ApiUserController@store');
+Route::get('/user/{id}', 'Api\ApiUserController@show');
+Route::patch('/user/{id}', 'Api\ApiUserController@update');
+Route::delete('/user/{id}', 'Api\ApiUserController@destroy')->name('api.user.delete');
 
-Route::get('/todo', 'ApiTodoController@index');
-Route::post('/todo', 'ApiTodoController@store');
-Route::get('/todo/{id}', 'ApiTodoController@show');
-Route::patch('/todo/{id}', 'ApiTodoController@update');
-Route::delete('/todo/{id}', 'ApiTodoController@destroy')->name('api.todo.delete');
+Route::get('/todo', 'Api\ApiTodoController@index');
+Route::post('/todo', 'Api\ApiTodoController@store');
+Route::get('/todo/{id}', 'Api\ApiTodoController@show');
+Route::patch('/todo/{id}', 'Api\ApiTodoController@update');
+Route::delete('/todo/{id}', 'Api\ApiTodoController@destroy')->name('api.todo.delete');
