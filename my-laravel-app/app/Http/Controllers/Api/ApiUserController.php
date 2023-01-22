@@ -28,7 +28,7 @@ class ApiUserController extends Controller
      */
     public function index()
     {
-        return json_encode(User::all());
+        return response()->json(User::all());
     }
 
     /**
@@ -54,7 +54,7 @@ class ApiUserController extends Controller
         }
 
         $this->end();
-        return json_encode($request);
+        return response()->json($request);
     }
 
     /**
@@ -66,7 +66,7 @@ class ApiUserController extends Controller
     public function show($id)
     {
         $user = User::findOrFail($id);
-        return json_encode($user);
+        return response()->json($user);
     }
 
     /**
@@ -92,7 +92,7 @@ class ApiUserController extends Controller
         }
 
         $this->end();
-        return json_encode($request);
+        return response()->json($request);
     }
 
     /**
@@ -118,6 +118,6 @@ class ApiUserController extends Controller
         }
 
         $this->end();
-        return json_encode($user);
+        return response()->json($user);
     }
 }

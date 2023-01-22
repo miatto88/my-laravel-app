@@ -27,7 +27,7 @@ class ApiTodoController extends Controller
      */
     public function index()
     {
-        return json_encode(Todo::all());
+        return response()->json(Todo::all());
     }
 
     /**
@@ -52,7 +52,7 @@ class ApiTodoController extends Controller
         }
 
         $this->end();
-        return json_encode($request);
+        return response()->json($request);
     }
 
     /**
@@ -64,7 +64,7 @@ class ApiTodoController extends Controller
     public function show($id)
     {
         $todo = Todo::with('user')->findOrFail($id);
-        return json_encode($todo);
+        return response()->json($todo);
     }
 
     /**
@@ -90,7 +90,7 @@ class ApiTodoController extends Controller
         }
 
         $this->end();
-        return json_encode($request);
+        return response()->json($request);
     }
 
     /**
@@ -113,10 +113,10 @@ class ApiTodoController extends Controller
         } catch (\Exception $e) {
             $this->errorLog('todos', 'delete id: ' . $id);
             DB::rollback();
-            return json_encode($id);
+            return response()->json($id);
         }
 
         $this->end();
-        return json_encode($todo);
+        return response()->json($todo);
     }
 }
