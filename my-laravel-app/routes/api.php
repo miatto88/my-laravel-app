@@ -18,6 +18,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::post('/login', 'Api\ApiAuthController@login');
+
 Route::get('/user', 'Api\ApiUserController@index');
 Route::post('/user', 'Api\ApiUserController@store');
 Route::get('/user/{id}', 'Api\ApiUserController@show');
