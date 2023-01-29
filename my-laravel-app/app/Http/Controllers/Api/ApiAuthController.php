@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+
 use App\Http\Controllers\Controller;
 
 use App\User;
@@ -25,9 +27,9 @@ class ApiAuthController extends Controller
 
     public function login(Request $request)
     {
-        $user = User::where(['email' => $request->email, 'password' => $request->password])->first();
+        $user = User::where(['email' => $request->email])->first();
 
-        if( !$user) {
+        if( !$user || !Hash::check($request->password, $user->password)) {
             return response()->json(['error' => 'Unauthorized']);
         }
 
