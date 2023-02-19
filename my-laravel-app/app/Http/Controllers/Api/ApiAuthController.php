@@ -8,21 +8,18 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
 
 use App\User;
+use App\Service\ServiceAuth;
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
 class ApiAuthController extends Controller
 {
-    protected $key;
-    protected $jwtAlgo;
-    protected $jwtExpire;
+    protected $serviceAuth;
 
     public function __construct()
     {
-        $this->key = config('jwt.JWT_SECRET');
-        $this->jwtAlgo = 'HS512';
-        $this->jwtExpire = time() + 3600;
+        $this->serviceAuth = new ServiceAuth;
     }
 
     public function login(Request $request)
@@ -33,20 +30,7 @@ class ApiAuthController extends Controller
             return response()->json(['error' => 'Unauthorized']);
         }
 
-        return $this->forgeAuth($user);
+        return $this->serviceAuth->forgeAuth($user);
     }
 
-    // JWTトークンを返却する処理
-    public function forgeAuth($user)
-    {
-        $auth = [
-            'id' => $user->id,
-            'name' => $user->name,
-            'email' => $user->email,
-            'expired_at' => $this->jwtExpire,
-        ];
-
-        $auth['token'] = JWT::encode($auth, $this->key, $this->jwtAlgo);
-        return $auth;
-    }
 }
