@@ -19,6 +19,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::post('/login', 'Api\ApiAuthController@login');
+Route::post('/myTodoList', 'Api\ApiAuthController@myTodoList');
 
 Route::get('/user', 'Api\ApiUserController@index');
 Route::post('/user', 'Api\ApiUserController@store');

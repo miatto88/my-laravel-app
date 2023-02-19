@@ -10,9 +10,6 @@ use App\Http\Controllers\Controller;
 use App\User;
 use App\Service\ServiceAuth;
 
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
-
 class ApiAuthController extends Controller
 {
     protected $serviceAuth;
@@ -30,7 +27,18 @@ class ApiAuthController extends Controller
             return response()->json(['error' => 'Unauthorized']);
         }
 
-        return $this->serviceAuth->forgeAuth($user);
+        $jwt = $this->serviceAuth->forgeAuth($user);
+        return $jwt;
+    }
+
+    public function myTodoList(Request $request)
+    {
+        $user = $this->serviceAuth->findUserByToken($request->bearerToken());
+        if( !$user) {
+            abort('403', 'ユーザーが取得できません。');
+        }
+
+        return $user->todos;
     }
 
 }

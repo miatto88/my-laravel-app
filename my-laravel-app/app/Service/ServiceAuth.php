@@ -4,7 +4,10 @@ namespace App\Service;
 
 use Illuminate\Support\Facades\Auth;
 
+use App\User;
+
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 class ServiceAuth
 {
@@ -29,7 +32,16 @@ class ServiceAuth
             'expired_at' => $this->jwtExpire,
         ];
 
-        $auth['token'] = JWT::encode($auth, $this->key, $this->jwtAlgo);
-        return $auth;
+        $jwt = JWT::encode($auth, $this->key, $this->jwtAlgo);
+        return $jwt;
+    }
+
+    // JWTトークンを受け取ってユーザーを返す処理
+    public function findUserByToken($jwt)
+    {
+        $decoded = JWT::decode($jwt, new Key($this->key, $this->jwtAlgo));
+
+        $user = User::find($decoded->id);
+        return $user;
     }
 }
